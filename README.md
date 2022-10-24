@@ -1,6 +1,5 @@
 # ADMIN DASHBOARD
-Install node.js
-Install MongoDB
+Install Nodejs and MongoDB
 
 Run `npm init` to install the dependencies
 Serve the API with `node app.js`
