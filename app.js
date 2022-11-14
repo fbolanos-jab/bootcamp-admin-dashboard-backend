@@ -1,6 +1,6 @@
 import express from "express";
 import mongoose from "mongoose";
-import { Transaction, User } from "./schemas.js";
+import { Admin, Transaction, User } from "./schemas.js";
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -32,6 +32,8 @@ app.use(express.json());
 // meaning only paths prefixed with "/api"
 // will cause this middleware to be invoked
 
+const apiKeys = [process.env.SECRET_API_KEY];
+
 app.use("/api", (req, res, next) => {
   const key = req.query["api-key"];
 
@@ -46,7 +48,54 @@ app.use("/api", (req, res, next) => {
   next();
 });
 
-const apiKeys = [process.env.SECRET_API_KEY];
+// example: http://localhost:3000/login
+app.post("/login", async (req, res) => {
+  const data = req.body;
+  if (
+    data.email &&
+    data.email !== "" &&
+    data.password &&
+    data.password !== ""
+  ) {
+    try {
+      const admin = await Admin.findOne({
+        email: data.email,
+        password: data.password,
+      });
+      console.log("admin", admin);
+      if (admin) {
+        res.send({ message: "successful", admin: admin });
+      } else {
+        res.send({ error: "Sorry, admin does not exists" });
+      }
+    } catch (error) {
+      res.status(404);
+      res.send({ error: "Sorry, can't find that." });
+    }
+  } else {
+    res.send({ error: "Invalid username or password" });
+  }
+});
+
+// example: http://localhost:3000/api/users
+app.post("/api/admins", async (req, res) => {
+  const data = req.body;
+
+  let newAdmin = new Admin({
+    firstName: data.firstName,
+    lastName: data.lastName,
+    email: data.email,
+    password: data.password,
+  });
+
+  try {
+    newAdmin = await newAdmin.save();
+    res.send({ message: "New Admin created", newAdmin: newAdmin });
+  } catch (error) {
+    res.status(404);
+    res.send({ error: "Sorry, can't find that" });
+  }
+});
 
 // example: http://localhost:3000/api/users
 app.post("/api/users", async (req, res) => {
@@ -89,7 +138,7 @@ app.post("/api/transactions", async (req, res) => {
     });
   } catch (error) {
     res.status(404);
-    res.send({ error: "Sorry, can't find that" });
+    res.send({ error: "Sorry, can't find that." });
   }
 });
 

@@ -6,6 +6,62 @@ Serve the API with `node app.js`
 
 ## End points:
 
+### Admin Login
+POST http://localhost:3000/login
+
+Request:
+```
+{
+    "email":"trent@email.com",
+    "password":"123456"
+}
+```
+
+Response:
+```
+{
+    "message": "successful",
+    "admin": {
+        "_id": "6372ba7fe50c5683ed89936d",
+        "firstName": "Trent",
+        "lastName": "Kimbell",
+        "email": "trent@email.com",
+        "password": "123456",
+        "active": true,
+        "__v": 0
+    }
+}
+```
+
+### Create admin
+POST http://localhost:3000/api/admin
+
+Request:
+```
+{
+    "firstName": "Trent",
+    "lastName": "Kimbell",
+    "email": "trent@email.com",
+    "password": "123456"
+}
+```
+
+Response:
+```
+{
+    "message": "New Admin created",
+    "newAdmin": {
+        "firstName": "Trent",
+        "lastName": "Kimbell",
+        "email": "trent@email.com",
+        "password": "123456",
+        "active": true,
+        "_id": "6372ba7fe50c5683ed89936d",
+        "__v": 0
+    }
+}
+```
+
 ### Get users
 
 GET http://localhost:3000/api/users
